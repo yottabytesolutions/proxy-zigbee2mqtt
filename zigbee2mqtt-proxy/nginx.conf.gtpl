@@ -69,6 +69,8 @@ http {
             proxy_ssl_verify_depth      2;
 {{- if .ssl_certificate }}
             proxy_ssl_trusted_certificate /ssl/{{ .ssl_certificate }};
+{{- else }}
+            proxy_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
 {{- end }}
 {{- else }}
             proxy_ssl_verify            off;

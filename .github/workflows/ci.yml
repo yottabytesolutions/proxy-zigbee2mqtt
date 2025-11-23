@@ -28,13 +28,18 @@ jobs:
       run: |
         echo "ADDON_LIST=['zigbee2mqtt', 'zigbee2mqtt-edge']" >> $GITHUB_ENV
         echo "BUILD_ARGS=--no-latest --test" >> $GITHUB_ENV
-    - name: "ARGS: zigbee2mqtt-proxy" # Build of addon proxy version
-      if: github.ref == 'refs/heads/master' && (github.event_name == 'workflow_dispatch' && github.event.inputs.type == 'proxy')
+    - name: "ARGS: master push" # Build both edge and proxy on push to master
+      if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+      run: |
+        echo "ADDON_LIST=['zigbee2mqtt-edge', 'zigbee2mqtt-proxy']" >> $GITHUB_ENV
+        echo "BUILD_ARGS=--no-cache" >> $GITHUB_ENV
+    - name: "ARGS: zigbee2mqtt-proxy" # Build of addon proxy version (manual dispatch only)
+      if: github.ref == 'refs/heads/master' && github.event_name == 'workflow_dispatch' && github.event.inputs.type == 'proxy'
       run: |
         echo "ADDON_LIST=['zigbee2mqtt-proxy']" >> $GITHUB_ENV
         echo "BUILD_ARGS=--no-cache" >> $GITHUB_ENV
-    - name: "ARGS: zigbee2mqtt-edge" # Build of addon edge version
-      if: github.ref == 'refs/heads/master' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.type == 'edge'))
+    - name: "ARGS: zigbee2mqtt-edge" # Build of addon edge version (manual dispatch only)
+      if: github.ref == 'refs/heads/master' && github.event_name == 'workflow_dispatch' && github.event.inputs.type == 'edge'
       run: |
         echo "ADDON_LIST=['zigbee2mqtt-edge']" >> $GITHUB_ENV
         echo "BUILD_ARGS=--no-cache" >> $GITHUB_ENV
