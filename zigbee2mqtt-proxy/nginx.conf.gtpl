@@ -61,6 +61,19 @@ http {
             proxy_send_timeout          86400s;
             proxy_max_temp_file_size    0;
 
+            # SSL/TLS settings for HTTPS upstream
+            proxy_ssl_server_name       on;
+            proxy_ssl_protocols         TLSv1.2 TLSv1.3;
+{{- if .ssl_verify }}
+            proxy_ssl_verify            on;
+            proxy_ssl_verify_depth      2;
+{{- if .ssl_certificate }}
+            proxy_ssl_trusted_certificate /ssl/{{ .ssl_certificate }};
+{{- end }}
+{{- else }}
+            proxy_ssl_verify            off;
+{{- end }}
+
             proxy_no_cache     1;
             proxy_cache_bypass 1;
 
