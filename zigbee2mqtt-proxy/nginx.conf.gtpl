@@ -50,16 +50,36 @@ http {
             deny    all;
 
             set     $target "{{ .server }}";
+            set     $upstream_host "{{ trimPrefix "https://" (trimPrefix "http://" .server) }}";
             set     $token "{{ .auth_token }}";
 
+{{- if .auth_token }}
             set $args                   $args&token=$token;
-            proxy_pass                  $target;
+{{- end }}
+            proxy_pass                  $target$request_uri;
             proxy_http_version          1.1;
             proxy_ignore_client_abort   off;
             proxy_read_timeout          86400s;
             proxy_redirect              off;
             proxy_send_timeout          86400s;
             proxy_max_temp_file_size    0;
+
+{{- if hasPrefix "https://" .server }}
+            # SSL/TLS settings for HTTPS upstream
+            proxy_ssl_server_name       on;
+            proxy_ssl_protocols         TLSv1.2 TLSv1.3;
+{{- if .ssl_verify }}
+            proxy_ssl_verify            on;
+            proxy_ssl_verify_depth      2;
+{{- if .ssl_certificate }}
+            proxy_ssl_trusted_certificate /ssl/{{ .ssl_certificate }};
+{{- else }}
+            proxy_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+{{- end }}
+{{- else }}
+            proxy_ssl_verify            off;
+{{- end }}
+{{- end }}
 
             proxy_no_cache     1;
             proxy_cache_bypass 1;
@@ -70,7 +90,7 @@ http {
 
             proxy_set_header Accept-Encoding "";
             proxy_set_header Connection $connection_upgrade;
-            proxy_set_header Host $http_host;
+            proxy_set_header Host $upstream_host;
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;

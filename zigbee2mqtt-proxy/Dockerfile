@@ -1,6 +1,6 @@
 ARG BUILD_FROM
 FROM $BUILD_FROM
-RUN apk add --no-cache --update nginx
+RUN apk add --no-cache --update nginx ca-certificates
 
 # Copy root filesystem
 ADD nginx.conf.gtpl /

@@ -1,9 +1,9 @@
 {
     "name": "Zigbee2MQTT Proxy",
-    "version": "0.3.0",
+    "version": "0.4.4",
     "slug": "zigbee2mqtt_proxy",
     "description": "Proxy for externally running Zigbee2MQTT",
-    "url": "https://github.com/zigbee2mqtt/hassio-zigbee2mqtt/tree/master/zigbee2mqtt-proxy",
+    "url": "https://github.com/yottabytesolutions/hassio-zigbee2mqtt/tree/master/zigbee2mqtt-proxy",
     "arch": [
       "aarch64",
       "amd64"
@@ -15,7 +15,8 @@
     "timeout": 30,
     "panel_icon": "mdi:zigbee",
     "map": [
-      "config:ro"
+      "config:ro",
+      "ssl:ro"
     ],
     "ports": {
       "8099/tcp": null
@@ -25,11 +26,15 @@
     },
     "options": {
       "server": null,
-      "auth_token": ""
+      "auth_token": "",
+      "ssl_verify": true,
+      "ssl_certificate": ""
     },
     "schema": {
       "server": "url",
-      "auth_token": "str?"
+      "auth_token": "str?",
+      "ssl_verify": "bool",
+      "ssl_certificate": "str?"
     },
-    "image": "ghcr.io/zigbee2mqtt/zigbee2mqtt-proxy-{arch}"
+    "image": "ghcr.io/yottabytesolutions/zigbee2mqtt-proxy-{arch}"
 }
